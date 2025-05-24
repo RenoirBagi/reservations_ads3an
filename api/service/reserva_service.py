@@ -6,12 +6,11 @@ class ReservaService:
     @staticmethod
     def validar_turma(turma_id):
         url = f"{TURMA_SERVICE_URL}/{turma_id}"
-        response = requests.get(url)
         try:
             response = requests.get(url)
             response.raise_for_status()
             data = response.json()
-            if data["id"] == turma_id:
+            if "id" in data and data["id"] == turma_id:
                 return True
             else:
                 print(f"ID da turma não corresponde. Esperado: {turma_id}, Recebido: {data.get('id')}")
