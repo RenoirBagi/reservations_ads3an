@@ -1,6 +1,7 @@
 from flask import request, jsonify
 import requests
 from database import db
+from service.reserva_service import ReservaService
 
 class Reserva(db.Model):
     __tablename__ = 'reservas'
@@ -29,11 +30,6 @@ class Reserva(db.Model):
             'hora_fim': self.hora_fim
         }
 
-def validar_turma(turma_id):
-    resp = requests.get(f"http://localhost:5000/turmas/{turma_id}")
-    print(resp)
-    return resp.status_code == 200
-
 def getReserva():
     reservas = Reserva.query.all()
     listar_reservas = []
@@ -44,7 +40,7 @@ def getReserva():
 def createReserva(dados):
     turma_id = dados.get("turma_id")
 
-    if not validar_turma(turma_id):
+    if not ReservaService.validar_turma(turma_id):
         return jsonify({"erro": "Turma não encontrada"}), 400
 
     novaReserva = Reserva(
