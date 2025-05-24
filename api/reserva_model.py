@@ -33,8 +33,15 @@ def validar_turma(turma_id):
     resp = requests.get(f"http://localhost:5000/turmas/{turma_id}")
     print(resp)
     return resp.status_code == 200
+
+def getReserva():
+    reservas = Reserva.query.all()
+    listar_reservas = []
+    for reservas in reservas:
+        listar_reservas.append(reservas.to_dict())
+    return listar_reservas
     
-def create_reserva(dados):
+def createReserva(dados):
     turma_id = dados.get("turma_id")
 
     if not validar_turma(turma_id):
