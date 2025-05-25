@@ -29,7 +29,23 @@ class Reserva(db.Model):
             'hora_inicio': self.hora_inicio,
             'hora_fim': self.hora_fim
         }
-
+    
+def disponibilidade(dados):
+    reservas_existentes = Reserva.query.filter_by(
+        sala=dados["sala"],
+        data=dados["data"]
+    ).all()
+    
+    hora_inicio_nova = dados["hora_inicio"]
+    hora_fim_nova = dados["hora_fim"]
+    
+    for reserva in reservas_existentes:
+        # Verifica se há sobreposição de horários
+        if not (hora_fim_nova <= reserva.hora_inicio or hora_inicio_nova >= reserva.hora_fim):
+            return False
+    
+    return True
+                
 def getReserva():
     reservas = Reserva.query.all()
     listar_reservas = []
@@ -42,7 +58,10 @@ def createReserva(dados):
 
     if not ReservaService.validar_turma(turma_id):
         return jsonify({"erro": "Turma não encontrada"}), 400
-
+    
+    if not disponibilidade(dados):
+        return jsonify({"erro": "Horário não disponível"}), 400
+    
     novaReserva = Reserva(
         turma_id=turma_id,
         sala=dados.get("sala"),
@@ -55,3 +74,5 @@ def createReserva(dados):
     db.session.commit()
 
     return novaReserva.to_dict()
+    
+    
