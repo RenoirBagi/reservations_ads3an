@@ -1,122 +1,86 @@
-# 📚 API de Reserva de Salas
+# API de Reservas de Salas 🏫
 
-Este repositório contém a **API de Reserva de Salas**, desenvolvida com **Flask** e **SQLAlchemy**, como parte de uma arquitetura baseada em **microsserviços**.
+API para gerenciamento de reservas de salas de aula, integrada ao serviço de Sistema Escolar.
 
-## 🧩 Arquitetura
+## Descrição
+- Gerencia reservas de salas com verificação de disponibilidade
+- Valida turmas existentes através de integração com microsserviço de Sistema Escolar 
+- Tecnologias: Python/Flask, SQLAlchemy, Docker
 
-A API de Reserva de Salas é um **microsserviço** que faz parte de um sistema maior de [School System](https://github.com/caio-ireno/School-System-Api)
-, sendo responsável exclusivamente pelo gerenciamento das reservas de salas por turma.
+## Execução com Docker
 
-⚠️ **Esta API depende de outra API de Gerenciamento Escolar (School System)**, que deve estar em execução e exposta localmente. A comunicação entre os serviços ocorre via **requisições HTTP REST**, para validar:
+### Pré-requisitos
+- Docker instalado
 
-- Se a **Turma** existe (`GET /turmas/<id>`)
-- (Opcional) Se o **Aluno** existe (`GET /alunos/<id>`) – pode ser desativado se não usado.
+### Passos
+1. Construa a imagem:
+   ```bash
+   docker build -t api-reservas .
+2. Execute o container:
+   ```bash
+   docker run -d -p 5001:5001 --name api-reservas api-reservas
+2. Abra o navegador e cole essa url:
+   ```bash
+   http://localhost:5001/reservas
+#### Endpoints principais
+   
+- GET /reservas - Lista todas as reservas
 
----
+- GET /reservas/< id > - Busca reserva por ID
 
-## 🚀 Tecnologias Utilizadas
+- POST /reservas - Cria nova reserva
 
-- Python 3.x
-- Flask
-- SQLAlchemy
-- SQLite (como banco de dados local)
-- Requests (para consumo da API externa)
+### Fluxo Principal
+- Cliente faz requisição para API de Reservas
 
----
+- API valida turma com serviço externo (5000)
 
-## ▶️ Como Executar a API
+- Verifica disponibilidade da sala
 
-### 1. Clone o repositório
+- Persiste reserva no banco SQLite
 
+### Protocolos de Integração
+- Comunicação síncrona via HTTP REST
+- Formato JSON para todas as requisições
+
+### Modelo de Dados
+- Python
+   ```bash
+   class Reserva(db.Model):
+       id = db.Column(db.Integer, primary_key=True)
+       turma_id = db.Column(db.Integer, nullable=False)
+       sala = db.Column(db.String(50), nullable=False)
+       data = db.Column(db.String(20), nullable=False)
+       hora_inicio = db.Column(db.String(10), nullable=False)
+       hora_fim = db.Column(db.String(10), nullable=False) .
+
+### Desenvolvimento
+- Estrutura de Arquivos
+   ```bash
+   reservations_ADS3AN/
+      ├──api/
+         ├── controllers/         
+         │   └── reserva_route.py   # Rotas
+         ├── models/              
+         │   └── reserva_model.py   # Modelos de dados
+         ├── services/            
+         │   └── reserva_service.py # Conexão com API Sistema Escolar
+         ├── app.py                 # Aplicação principal
+         ├── database.py            # Configuração do banco
+         ├── test.py                # Teste da API
+         ├── services/
+         │   └── reservas.db        # Banco de Dados
+         ├── dockerfile             # Criar imagem Docker
+         ├── readme.md              # Documentação
+         └── requirements.txt       # Dependências
+
+### Exemplo de Requisição
 ```bash
-git clone https://github.com/seu-usuario/reserva-salas.git
-cd reserva-salas
-```
-
-### 2. Crie um ambiente virtual (opcional, mas recomendado)
-
-```bash
-python3 -m venv venv
-source venv/bin/activate  # Linux/macOS
-venv\Scripts\activate     # Windows
-```
-
-### 3. Instale as dependências
-
-```bash
-pip install -r requirements.txt
-```
-
-### 4. Execute a API
-
-```bash
-python app.py
-```
-
-A aplicação estará disponível em:
-📍 `http://localhost:5001`
-
-📝 **Observação:** O banco de dados é criado automaticamente na primeira execução.
-
----
-
-## 📡 Endpoints Principais
-
-- `GET /reservas` – Lista todas as reservas
-- `POST /reservas` – Cria uma nova reserva
-- `GET /reservas/<id>` – Detalha uma reserva
-- `PUT /reservas/<id>` – Atualiza uma reserva
-- `DELETE /reservas/<id>` – Remove uma reserva
-
-### Exemplo de corpo JSON para criação:
-
-```json
-{
-  "turma_id": 1,
-  "sala": "101",
-  "data": "2025-05-06",
-  "hora_inicio": "14:00",
-  "hora_fim": "16:00"
-}
-```
-
----
-
-## 🔗 Dependência Externa
-
-Certifique-se de que a **API de Gerenciamento Escolar** esteja rodando em:
-
-```
-http://localhost:5000
-```
-
-E que os endpoints de `GET /turmas/<id>` (e opcionalmente `GET /alunos/<id>`) estejam funcionando corretamente para que a validação seja feita com sucesso.
-
----
-
-## 📦 Estrutura do Projeto
-
-```
-reserva-salas/
-│
-├── app.py
-├── reserva_model.py
-├── database.py
-├── routes.py
-├── requirements.txt
-└── README.md
-```
-
----
-
-## 🛠️ Futuras Melhorias
-
-- Validação de conflito de horário na sala
-- Integração via fila (RabbitMQ) com outros microsserviços
-- Autenticação de usuários
-
----
-
-## 🧑‍💻 Autor
-
-Caio Ireno – Projeto educativo de arquitetura com Flask e microsserviços.
+   POST /reservas
+   {
+       "turma_id": 1,
+       "sala": "A101",
+       "data": "2023-11-20",
+       "hora_inicio": "14:00",
+       "hora_fim": "16:00"
+   }
