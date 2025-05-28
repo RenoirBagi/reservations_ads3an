@@ -29,6 +29,10 @@ class Reserva(db.Model):
             'hora_inicio': self.hora_inicio,
             'hora_fim': self.hora_fim
         }
+
+
+class ReservaNaoEncontrada(Exception):    
+    pass
     
 def disponibilidade(dados):
     reservas_existentes = Reserva.query.filter_by(
@@ -40,7 +44,6 @@ def disponibilidade(dados):
     hora_fim_nova = dados["hora_fim"]
     
     for reserva in reservas_existentes:
-        # Verifica se há sobreposição de horários
         if not (hora_fim_nova <= reserva.hora_inicio or hora_inicio_nova >= reserva.hora_fim):
             return False
     
@@ -52,6 +55,12 @@ def getReserva():
     for reservas in reservas:
         listar_reservas.append(reservas.to_dict())
     return listar_reservas
+
+def getReservaById(id_reserva):
+    reserva = Reserva.query.get(id_reserva)
+    if not reserva:
+        raise ReservaNaoEncontrada
+    return reserva.to_dict()
     
 def createReserva(dados):
     turma_id = dados.get("turma_id")
