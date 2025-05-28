@@ -1,10 +1,10 @@
 # API de Reservas de Salas 🏫
 
-API para gerenciamento de reservas de salas de aula, integrada ao serviço de turmas.
+API para gerenciamento de reservas de salas de aula, integrada ao serviço de Sistema Escolar.
 
 ## Descrição
 - Gerencia reservas de salas com verificação de disponibilidade
-- Valida turmas existentes através de integração com microsserviço de turmas
+- Valida turmas existentes através de integração com microsserviço de Sistema Escolar 
 - Tecnologias: Python/Flask, SQLAlchemy, Docker
 
 ## Execução com Docker
@@ -16,49 +16,44 @@ API para gerenciamento de reservas de salas de aula, integrada ao serviço de tu
 1. Construa a imagem:
    ```bash
    docker build -t api-reservas .
-Execute o container:
+2. Execute o container:
+   ```bash
+   docker run -d -p 5001:5001 --name api-reservas api-reservas .
+2. Abra o navegador usado:
+   ```bash
+   http://localhost:5001/reservas .
+### Endpoints principais
+   
+- GET /reservas - Lista todas as reservas
 
-bash
-docker run -d -p 5001:5001 --name api-reservas api-reservas
-Endpoints principais
-GET /reservas - Lista todas as reservas
+- GET /reservas/<id> - Busca reserva por ID
 
-GET /reservas/<id> - Busca reserva por ID
+- POST /reservas - Cria nova reserva
 
-POST /reservas - Cria nova reserva
+### Fluxo Principal
+- Cliente faz requisição para API de Reservas
 
-Arquitetura
-Diagrama de Componentes
-API Reservas (5001) → SQLite Database
-       ↓
-[TURMA_SERVICE_URL] (5000)
-Fluxo Principal
-Cliente faz requisição para API de Reservas
+- API valida turma com serviço externo (5000)
 
-API valida turma com serviço externo (5000)
+- Verifica disponibilidade da sala
 
-Verifica disponibilidade da sala
+- Persiste reserva no banco SQLite
 
-Persiste reserva no banco SQLite
+### Protocolos de Integração
+- Comunicação síncrona via HTTP REST
+- Formato JSON para todas as requisições
 
-Ecossistema de Microsserviços
-Serviço	Porta	Função	Integração
-api-reservas	5001	Gerencia reservas de salas	Consome api-turmas (5000)
-api-turmas	5000	Gerencia dados de turmas	Fornece validação para reservas
-Protocolos de Integração
-Comunicação síncrona via HTTP REST
+### Modelo de Dados
+1. Python
+   ```bash
+   class Reserva(db.Model):
+       id = db.Column(db.Integer, primary_key=True)
+       turma_id = db.Column(db.Integer, nullable=False)
+       sala = db.Column(db.String(50), nullable=False)
+       data = db.Column(db.String(20), nullable=False)
+       hora_inicio = db.Column(db.String(10), nullable=False)
+       hora_fim = db.Column(db.String(10), nullable=False) .
 
-Formato JSON para todas as requisições
-
-Modelo de Dados
-python
-class Reserva(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    turma_id = db.Column(db.Integer, nullable=False)
-    sala = db.Column(db.String(50), nullable=False)
-    data = db.Column(db.String(20), nullable=False)
-    hora_inicio = db.Column(db.String(10), nullable=False)
-    hora_fim = db.Column(db.String(10), nullable=False)
 Desenvolvimento
 Estrutura de Arquivos
 api/
