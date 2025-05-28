@@ -1,6 +1,6 @@
 from flask import Blueprint, request, jsonify
 import requests
-from .reserva_model import Reserva, createReserva, getReserva, getReservaById, ReservaNaoEncontrada
+from models.reserva_model import Reserva, createReserva, getReserva, getReservaById, ReservaNaoEncontrada
 
 routes = Blueprint("routes", __name__)
 

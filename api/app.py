@@ -1,6 +1,6 @@
 from flask import Flask
 from database import db
-from reservas.reserva_route import routes
+from controllers.reserva_route import routes
 from flask_sqlalchemy import SQLAlchemy
 
 app = Flask(__name__)

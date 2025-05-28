@@ -15,7 +15,7 @@ class TestStringMethods(unittest.TestCase):
           self.assertEqual(type(lista_reserva), type([]))
 
      def test_001_reserva_retorna_por_id(self):
-          r = requests.post('http://localhost:5001/reservas', json={"turma_id": 1, "sala": "Sala 103", "data": "2024-06-15", "hora_inicio": "01:00", "hora_fim": "01:30"})
+          r = requests.post('http://localhost:5001/reservas', json={"turma_id": 1, "sala": "Sala 106", "data": "2024-06-15", "hora_inicio": "01:00", "hora_fim": "01:30"})
 
           get = requests.get('http://localhost:5001/reservas')
           lista_turmas = get.json()
@@ -29,7 +29,7 @@ class TestStringMethods(unittest.TestCase):
           self.assertEqual(type(retorno),type({}))
 
      def test_001_reserva_criacao(self):
-          r = requests.post('http://localhost:5001/reservas', json={"turma_id": 2, "sala": "Sala 102", "data": "2024-06-15", "hora_inicio": "10:45", "hora_fim": "11:30"})
+          r = requests.post('http://localhost:5001/reservas', json={"turma_id": 2, "sala": "Sala 107", "data": "2024-06-15", "hora_inicio": "10:45", "hora_fim": "11:30"})
           print(r)
           if r.status_code == 404:
                self.fail("Página /reserva não definida no servidor para o método POST.")
